@@ -1,6 +1,6 @@
 import pytest
 
-import vocalpy
+import biosound
 
 
 class TestUnit:
@@ -11,8 +11,8 @@ class TestUnit:
         ],
     )
     def test_init(self, onset, offset):
-        unit = vocalpy.Unit(onset, offset)
-        assert isinstance(unit, vocalpy.Unit)
+        unit = biosound.Unit(onset, offset)
+        assert isinstance(unit, biosound.Unit)
         for attr_name, attr_val in zip(
             ("onset", "offset"),
             (onset, offset),
@@ -29,4 +29,4 @@ class TestUnit:
     )
     def test_post_init_raises(self, onset, offset, expected_exception):
         with pytest.raises(expected_exception):
-            vocalpy.Unit(onset, offset)
+            biosound.Unit(onset, offset)

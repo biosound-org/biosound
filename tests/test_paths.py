@@ -1,6 +1,6 @@
 import pytest
 
-import vocalpy as voc
+import biosound as voc
 
 from .fixtures.audio import (
     AUDIO_DIR_CBIN,

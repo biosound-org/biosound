@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import vocalpy
+import biosound
 
 from ..fixtures.audio import ALL_ZEBRA_FINCH_WAVS, MULTICHANNEL_FLY_WAV
 
@@ -12,7 +12,7 @@ AUDIO_PATHS = ALL_ZEBRA_FINCH_WAVS + [MULTICHANNEL_FLY_WAV]
 @pytest.fixture(params=AUDIO_PATHS)
 def sound_to_test_sat_features(request):
     path = request.param
-    sound = vocalpy.Sound.read(path)
+    sound = biosound.Sound.read(path)
     return sound
 
 
@@ -24,10 +24,10 @@ def sound_to_test_sat_features(request):
 )
 def test_goodness_of_pitch(sound_to_test_sat_features, n_fft, hop_length):
     """Test :func:`vocalpy.feature._sat.goodness_of_pitch` returns expected outputs"""
-    _, spectra1, spectra2 = vocalpy.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
-    cepstrogram, quefrencies = vocalpy.feature._sat._get_cepstral(spectra1, n_fft, sound_to_test_sat_features.samplerate)
+    _, spectra1, spectra2 = biosound.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    cepstrogram, quefrencies = biosound.feature._sat._get_cepstral(spectra1, n_fft, sound_to_test_sat_features.samplerate)
 
-    out = vocalpy.feature._sat.goodness_of_pitch(
+    out = biosound.feature._sat.goodness_of_pitch(
         cepstrogram, quefrencies,
     )
 
@@ -45,12 +45,12 @@ def test_goodness_of_pitch(sound_to_test_sat_features, n_fft, hop_length):
 )
 def test_mean_frequency(sound_to_test_sat_features, n_fft, hop_length, freq_range):
     """Test :func:`vocalpy.feature._sat.mean_frequency` returns expected outputs"""
-    spect = vocalpy.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    spect = biosound.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
     f = spect.frequencies
     max_freq_idx = int(np.floor(f.shape[0] * freq_range))
     max_freq = f[max_freq_idx]
 
-    out = vocalpy.feature._sat.mean_frequency(
+    out = biosound.feature._sat.mean_frequency(
         spect, max_freq=max_freq
     )
 
@@ -72,14 +72,14 @@ def test_mean_frequency(sound_to_test_sat_features, n_fft, hop_length, freq_rang
 )
 def test_frequency_modulation(sound_to_test_sat_features, n_fft, hop_length, freq_range):
     """Test :func:`vocalpy.feature._sat.frequency_modulation` returns expected outputs"""
-    power_spectrogram, spectra1, spectra2 = vocalpy.spectral.sat._sat_multitaper(
+    power_spectrogram, spectra1, spectra2 = biosound.spectral.sat._sat_multitaper(
         sound_to_test_sat_features, n_fft, hop_length
     )
     f = power_spectrogram.frequencies
     max_freq_idx = int(np.floor(f.shape[0] * freq_range))
 
-    dSdt, dSdf = vocalpy.feature._sat._get_spectral_derivatives(spectra1, spectra2, max_freq_idx)
-    out = vocalpy.feature._sat.frequency_modulation(
+    dSdt, dSdf = biosound.feature._sat._get_spectral_derivatives(spectra1, spectra2, max_freq_idx)
+    out = biosound.feature._sat.frequency_modulation(
         dSdt, dSdf
     )
 
@@ -96,13 +96,13 @@ def test_frequency_modulation(sound_to_test_sat_features, n_fft, hop_length, fre
 )
 def test_amplitude_modulation(sound_to_test_sat_features, n_fft, hop_length, freq_range):
     """Test :func:`vocalpy.feature._sat.amplitude_modulation` returns expected outputs"""
-    spect, spectra1, spectra2 = vocalpy.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    spect, spectra1, spectra2 = biosound.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
     f = spect.frequencies
     max_freq_idx = int(np.floor(f.shape[0] * freq_range))
 
-    dSdt, _ = vocalpy.feature._sat._get_spectral_derivatives(spectra1, spectra2, max_freq_idx)
+    dSdt, _ = biosound.feature._sat._get_spectral_derivatives(spectra1, spectra2, max_freq_idx)
 
-    out = vocalpy.feature._sat.amplitude_modulation(
+    out = biosound.feature._sat.amplitude_modulation(
         dSdt
     )
 
@@ -119,14 +119,14 @@ def test_amplitude_modulation(sound_to_test_sat_features, n_fft, hop_length, fre
 )
 def test_entropy(sound_to_test_sat_features, n_fft, hop_length, freq_range):
     """Test :func:`vocalpy.feature._sat.entropy` returns expected outputs"""
-    power_spectrogram, spectra1, spectra2 = vocalpy.spectral.sat._sat_multitaper(
+    power_spectrogram, spectra1, spectra2 = biosound.spectral.sat._sat_multitaper(
         sound_to_test_sat_features, n_fft, hop_length
     )
     f = power_spectrogram.frequencies
     max_freq_idx = int(np.floor(f.shape[0] * freq_range))
     max_freq = f[max_freq_idx]
 
-    out = vocalpy.feature._sat.entropy(
+    out = biosound.feature._sat.entropy(
         power_spectrogram, max_freq=max_freq
     )
 
@@ -143,12 +143,12 @@ def test_entropy(sound_to_test_sat_features, n_fft, hop_length, freq_range):
 )
 def test_amplitude(sound_to_test_sat_features, n_fft, hop_length, freq_range):
     """Test :func:`vocalpy.feature._sat.amplitude` returns expected outputs"""
-    spect = vocalpy.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    spect = biosound.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
     f = spect.frequencies
     max_freq_idx = int(np.floor(f.shape[0] * freq_range))
     max_freq = f[max_freq_idx]
 
-    out = vocalpy.feature._sat.amplitude(
+    out = biosound.feature._sat.amplitude(
         spect, max_freq=max_freq
     )
 
@@ -167,16 +167,16 @@ def test_pitch(n_fft, hop_length, sound_to_test_sat_features):
     """Test :func:`vocalpy.feature._sat.pitch` returns expected outputs"""
 
     if sound_to_test_sat_features.samplerate <= 10000:
-        out = vocalpy.feature._sat.pitch(
+        out = biosound.feature._sat.pitch(
             sound_to_test_sat_features, fmax_yin=5000,
         )
     else:
-        out = vocalpy.feature._sat.pitch(
+        out = biosound.feature._sat.pitch(
             sound_to_test_sat_features
         )
 
     # get spectrogram as lazy way to figure out expected number of time bins
-    power_spectrogram = vocalpy.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    power_spectrogram = biosound.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
 
     assert isinstance(out, np.ndarray)
     assert out.ndim == 2
@@ -190,9 +190,9 @@ def test_pitch(n_fft, hop_length, sound_to_test_sat_features):
     ]
 )
 def test__get_cepstral(sound_to_test_sat_features, n_fft, hop_length):
-    _, spectra1, spectra2 = vocalpy.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    _, spectra1, spectra2 = biosound.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
 
-    cepstrogram, quefrencies = vocalpy.feature._sat._get_cepstral(
+    cepstrogram, quefrencies = biosound.feature._sat._get_cepstral(
         spectra1, n_fft, sound_to_test_sat_features.samplerate
     )
 
@@ -208,11 +208,11 @@ def test__get_cepstral(sound_to_test_sat_features, n_fft, hop_length):
     ]
 )
 def test__get_spectral_derivatives(sound_to_test_sat_features, n_fft, hop_length, freq_range):
-    spect, spectra1, spectra2 = vocalpy.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    spect, spectra1, spectra2 = biosound.spectral.sat._sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
     f = spect.frequencies
     max_freq_idx = int(np.floor(f.shape[0] * freq_range))
 
-    dSdt, dSdf = vocalpy.feature._sat._get_spectral_derivatives(spectra1, spectra2, max_freq_idx)
+    dSdt, dSdf = biosound.feature._sat._get_spectral_derivatives(spectra1, spectra2, max_freq_idx)
 
     assert isinstance(dSdt, np.ndarray)
     assert isinstance(dSdf, np.ndarray)
@@ -232,12 +232,12 @@ def test_sat(
         freq_range, min_freq, amp_baseline, max_F0, fmax_yin, trough_threshold
 ):
     """Test :func:`vocalpy.feature._sat.sat` returns expected outputs"""
-    power_spectrogram = vocalpy.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
+    power_spectrogram = biosound.spectral.sat.sat_multitaper(sound_to_test_sat_features, n_fft, hop_length)
     if sound_to_test_sat_features.samplerate <= 10000:
         # set to some value at/below Nyquist freq
         fmax_yin = 5000
 
-    out = vocalpy.feature._sat.sat(
+    out = biosound.feature._sat.sat(
         sound_to_test_sat_features,
         n_fft,
         hop_length,
@@ -249,7 +249,7 @@ def test_sat(
         trough_threshold
     )
 
-    assert isinstance(out, vocalpy.Features)
+    assert isinstance(out, biosound.Features)
     assert len(out.data.data_vars) == 6
     assert len(out.data.coords) == 2
     for coord_name in ('channel', 'time'):

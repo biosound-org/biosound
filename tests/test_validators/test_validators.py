@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-import vocalpy.validators
+import biosound.validators
 
 
 @pytest.mark.parametrize(
@@ -12,7 +12,7 @@ import vocalpy.validators
     ]
 )
 def test_is_1d_ndarray(y):
-    assert vocalpy.validators.is_1d_ndarray(y) is True
+    assert biosound.validators.is_1d_ndarray(y) is True
 
 
 @pytest.mark.parametrize(
@@ -26,7 +26,7 @@ def test_is_1d_ndarray(y):
 )
 def test_is_1d_ndarray_raises_type_error(y):
     with pytest.raises(TypeError):
-        vocalpy.validators.is_1d_ndarray(y)
+        biosound.validators.is_1d_ndarray(y)
 
 
 @pytest.mark.parametrize(
@@ -45,7 +45,7 @@ def test_is_1d_ndarray_raises_type_error(y):
 )
 def test_is_1d_ndarray_raises_value_error(y):
     with pytest.raises(ValueError):
-        vocalpy.validators.is_1d_ndarray(y)
+        biosound.validators.is_1d_ndarray(y)
 
 
 @pytest.mark.parametrize(
@@ -65,7 +65,7 @@ def test_is_1d_ndarray_raises_value_error(y):
     ]
 )
 def test_is_valid_boundaries_array(y):
-    assert vocalpy.validators.is_valid_boundaries_array(y) is True
+    assert biosound.validators.is_valid_boundaries_array(y) is True
 
 
 @pytest.mark.parametrize(
@@ -85,7 +85,7 @@ def test_is_valid_boundaries_array(y):
 )
 def test_is_valid_boundaries_array_raises_type_error(y):
     with pytest.raises(TypeError):
-        vocalpy.validators.is_valid_boundaries_array(y)
+        biosound.validators.is_valid_boundaries_array(y)
 
 
 @pytest.mark.parametrize(
@@ -110,7 +110,7 @@ def test_is_valid_boundaries_array_raises_type_error(y):
 )
 def test_is_valid_boundaries_array_raises_value_error(y):
     with pytest.raises(ValueError):
-        vocalpy.validators.is_valid_boundaries_array(y)
+        biosound.validators.is_valid_boundaries_array(y)
 
 
 @pytest.mark.parametrize(
@@ -121,7 +121,7 @@ def test_is_valid_boundaries_array_raises_value_error(y):
     ]
 )
 def test_have_same_dtype(arr1, arr2):
-    assert vocalpy.validators.have_same_dtype(arr1, arr2) is True
+    assert biosound.validators.have_same_dtype(arr1, arr2) is True
 
 
 
@@ -136,4 +136,4 @@ def test_have_same_dtype(arr1, arr2):
 )
 def test_have_same_dtype_raises_value_error(arr1, arr2):
     with pytest.raises(ValueError):
-        vocalpy.validators.have_same_dtype(arr1, arr2)
+        biosound.validators.have_same_dtype(arr1, arr2)

@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 import xarray as xr
 
-import vocalpy.segments
+import biosound.segments
 
 from .fixtures.audio import AUDIO_LIST_CBIN, JOURJINE_ET_AL_GO_WAV_PATH
 from .fixtures.segments import JOURJINE_ET_AL_2023_GO_SEGMENT_CSV_PATH
@@ -13,8 +13,8 @@ from .fixtures.segments import JOURJINE_ET_AL_2023_GO_SEGMENT_CSV_PATH
 
 @pytest.fixture
 def bfsongrepo_segments_csv_path(tmp_path):
-    sound = vocalpy.Sound.read(AUDIO_LIST_CBIN[0])
-    segments = vocalpy.segment.meansquared(sound, threshold=5000, min_dur=0.02, min_silent_dur=0.004)
+    sound = biosound.Sound.read(AUDIO_LIST_CBIN[0])
+    segments = biosound.segment.meansquared(sound, threshold=5000, min_dur=0.02, min_silent_dur=0.004)
     segments_df = pd.DataFrame.from_records(
         dict(start_ind=segments.start_inds, length=segments.lengths)
     )
@@ -23,7 +23,7 @@ def bfsongrepo_segments_csv_path(tmp_path):
     return bfsongrepo_segments_csv_path
 
 
-TEST_SOUND = vocalpy.Sound(
+TEST_SOUND = biosound.Sound(
     data=np.random.rand(1, 32000),
     samplerate=32000,
 )
@@ -61,7 +61,7 @@ SEGMENTS_ARGVALS = [
     ),
 ]
 SEGMENTS_FOR_FIXTURE = [
-    vocalpy.Segments(**{
+    biosound.Segments(**{
         k: v
         for k, v in zip(SEGMENTS_ARGNAMES.split(sep=', '), argvals)
     })
@@ -79,7 +79,7 @@ class TestSegments:
     )
     def test_init(self, start_inds, lengths, samplerate, labels):
         if labels is not None:
-            segments = vocalpy.segments.Segments(
+            segments = biosound.segments.Segments(
                 start_inds,
                 lengths,
                 samplerate,
@@ -87,12 +87,12 @@ class TestSegments:
             )
         else:
             # test we get default labels, empty strings
-            segments = vocalpy.segments.Segments(
+            segments = biosound.segments.Segments(
                 start_inds,
                 lengths,
                 samplerate,
             )
-        assert isinstance(segments, vocalpy.segments.Segments)
+        assert isinstance(segments, biosound.segments.Segments)
         for attr_name, attr_val in zip(
             ['start_inds', 'lengths', 'samplerate', 'labels'],
             [start_inds, lengths, samplerate, labels],
@@ -247,7 +247,7 @@ class TestSegments:
     )
     def test_init_raises(self, start_inds, lengths, samplerate, labels, expected_exception):
         with pytest.raises(expected_exception):
-            vocalpy.segments.Segments(
+            biosound.segments.Segments(
                 start_inds,
                 lengths,
                 samplerate,
@@ -313,7 +313,7 @@ class TestSegments:
     def test_from_json(self, a_segments, tmp_path):
         json_path = tmp_path / 'a_segments.json'
         a_segments.to_json(json_path)
-        a_segments_from_json = vocalpy.segments.Segments.from_json(
+        a_segments_from_json = biosound.segments.Segments.from_json(
             json_path
         )
         # we check attributes are equal "manually", so as to not
@@ -358,7 +358,7 @@ class TestSegments:
         ]
     )
     def test___len__(self, start_inds, lengths, sound, labels, expected_len):
-        segments = vocalpy.Segments(
+        segments = biosound.Segments(
             start_inds, lengths, sound.samplerate, labels
         )
         assert len(segments) == expected_len
@@ -367,13 +367,13 @@ class TestSegments:
         'segments, other, expected_eq',
         [
             (
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([0, 10, 20, 30, 40]),
                     np.array([10, 10, 10, 10, 10]),
                     TEST_SOUND.samplerate,
                     [''] * 5,
                 ),
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([0, 10, 20, 30, 40]),
                     np.array([10, 10, 10, 10, 10]),
                     TEST_SOUND.samplerate,
@@ -382,13 +382,13 @@ class TestSegments:
                 True,
             ),
             (
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([0, 10, 20, 30, 40]),
                     np.array([10, 10, 10, 10, 10]),
                     TEST_SOUND.samplerate,
                     [''] * 5,
                 ),
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([0, 10, 20, 30, 40]),
                     np.array([10, 10, 10, 10, 10]),
                     TEST_SOUND.samplerate,
@@ -401,13 +401,13 @@ class TestSegments:
             ),
             # empty segments
             (
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([]).astype(int),
                     np.array([]).astype(int),
                     TEST_SOUND.samplerate,
                     None,
                 ),
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([]).astype(int),
                     np.array([]).astype(int),
                     TEST_SOUND.samplerate,
@@ -416,13 +416,13 @@ class TestSegments:
                 True,
             ),
             (
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([0, 10, 20, 30, 40]),
                     np.array([10, 10, 10, 10, 10]),
                     TEST_SOUND.samplerate,
                     list('abcde'),
                 ),
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([0, 10, 20, 30, 40]),
                     np.array([10, 10, 10, 10, 10]),
                     TEST_SOUND.samplerate,
@@ -431,13 +431,13 @@ class TestSegments:
                 True,
             ),
             (
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([0, 10, 20, 30, 40]),
                     np.array([10, 10, 10, 10, 10]),
                     TEST_SOUND.samplerate,
                     list('abcde'),
                 ),
-                vocalpy.Segments(
+                biosound.Segments(
                     np.array([]).astype(int),
                     np.array([]).astype(int),
                     TEST_SOUND.samplerate,
@@ -457,19 +457,19 @@ class TestSegments:
             [
                 (
                     "bfsongrepo_segments_csv_path",
-                    vocalpy.Sound.read(AUDIO_LIST_CBIN[0]).samplerate,
+                    biosound.Sound.read(AUDIO_LIST_CBIN[0]).samplerate,
                     None, 
                     None
                 ),
                 (
                     JOURJINE_ET_AL_2023_GO_SEGMENT_CSV_PATH,
-                    vocalpy.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
+                    biosound.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
                     {"start_seconds": "start_s", "stop_seconds": "stop_s"},
                     None,
                 ),
                 (
                     JOURJINE_ET_AL_2023_GO_SEGMENT_CSV_PATH,
-                    vocalpy.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
+                    biosound.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
                     {"start_seconds": "start_s", "stop_seconds": "stop_s"},
                     '-',
                 ),
@@ -479,10 +479,10 @@ class TestSegments:
         if isinstance(segments_csv_path, str):
             segments_csv_path = request.getfixturevalue(segments_csv_path)
 
-        segments = vocalpy.Segments.from_csv(
+        segments = biosound.Segments.from_csv(
             segments_csv_path, samplerate, columns_map=columns_map, default_label=default_label
         )
-        assert isinstance(segments, vocalpy.Segments)
+        assert isinstance(segments, biosound.Segments)
         
     @pytest.mark.parametrize(
             'segments_csv_path, samplerate, columns_map, default_label, expected_exception',
@@ -506,7 +506,7 @@ class TestSegments:
                 # `columns_map` not a dict, throws a TypeError
                 (
                     JOURJINE_ET_AL_2023_GO_SEGMENT_CSV_PATH,
-                    vocalpy.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
+                    biosound.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
                     [],
                     None,
                     TypeError
@@ -514,7 +514,7 @@ class TestSegments:
                 # not all key-value pairs in `columns_map` are string to string
                 (
                     JOURJINE_ET_AL_2023_GO_SEGMENT_CSV_PATH,
-                    vocalpy.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
+                    biosound.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
                     {"start_seconds": "onset_s", "stop_seconds": 0},
                     None,
                     ValueError
@@ -522,7 +522,7 @@ class TestSegments:
                 # invalid values for `columns_map`, not in `Segments.COLUMNS_MAP_VALID_VALUES`
                 (
                     JOURJINE_ET_AL_2023_GO_SEGMENT_CSV_PATH,
-                    vocalpy.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
+                    biosound.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH).samplerate,
                     {"start_seconds": "start_sec", "stop_seconds": "stop_sec"},
                     None,
                     ValueError
@@ -539,6 +539,6 @@ class TestSegments:
     )
     def test_from_csv_raises(self, segments_csv_path, samplerate, columns_map, default_label, expected_exception):
         with pytest.raises(expected_exception):
-            vocalpy.Segments.from_csv(
+            biosound.Segments.from_csv(
             segments_csv_path, samplerate, columns_map=columns_map, default_label=default_label
         )

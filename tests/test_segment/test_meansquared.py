@@ -3,13 +3,13 @@ import numpy as np
 import pytest
 import scipy.io
 
-import vocalpy.segment.meansquared
+import biosound.segment.meansquared
 
 from ..fixtures.segments import EVSONGANALY_SEGMENT_JSON
 
 
 def test_meansquared(all_cbin_paths):
-    sound = vocalpy.Sound.read(all_cbin_paths)
+    sound = biosound.Sound.read(all_cbin_paths)
 
     notmat = str(all_cbin_paths) + '.not.mat'
     nmd = crowsetta.formats.seq.notmat.load_notmat(notmat)
@@ -17,14 +17,14 @@ def test_meansquared(all_cbin_paths):
     min_silent_dur = nmd['min_int'] / 1000
     threshold = nmd['threshold']
 
-    segments = vocalpy.segment.meansquared(sound, threshold, min_syl_dur, min_silent_dur)
-    assert isinstance(segments, vocalpy.Segments)
+    segments = biosound.segment.meansquared(sound, threshold, min_syl_dur, min_silent_dur)
+    assert isinstance(segments, biosound.Segments)
 
 
 def test_meansquared_raises(multichannel_fly_wav_sound):
     """Test :func:`vocalpy.segment.meansquared` raises an error when a sound has multiple channels"""
     with pytest.raises(ValueError):
-        _ = vocalpy.segment.meansquared(multichannel_fly_wav_sound)
+        _ = biosound.segment.meansquared(multichannel_fly_wav_sound)
 
 
 @pytest.fixture(params=EVSONGANALY_SEGMENT_JSON)
@@ -36,14 +36,14 @@ def test_meansquared_replicates_evsonganaly(evsonganaly_segment_dict):
     cbin_path = evsonganaly_segment_dict['cbin_path']
     notmat_path = evsonganaly_segment_dict['notmat_path']
     segment_mat_path = evsonganaly_segment_dict['segment_mat_path']
-    sound = vocalpy.Sound.read(cbin_path)
+    sound = biosound.Sound.read(cbin_path)
     nmd = crowsetta.formats.seq.notmat.load_notmat(notmat_path)
     min_syl_dur = nmd['min_dur'] / 1000
     min_silent_dur = nmd['min_int'] / 1000
     threshold = nmd['threshold']
 
     # ---- output
-    segments = vocalpy.segment.meansquared(sound, threshold, min_syl_dur, min_silent_dur)
+    segments = biosound.segment.meansquared(sound, threshold, min_syl_dur, min_silent_dur)
 
     # ---- assert
     segment_dict = scipy.io.loadmat(segment_mat_path, squeeze_me=True)

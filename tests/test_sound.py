@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 import soundfile
 
-import vocalpy
+import biosound
 
 from .fixtures.audio import (
     MULTICHANNEL_FLY_WAV,
@@ -19,7 +19,7 @@ def assert_sound_is_instance_with_expected_attrs(
         sound, data, samplerate, channels, audio_format
 ):
     """Assertions helper we use in TestSound methods"""
-    assert isinstance(sound, vocalpy.Sound)
+    assert isinstance(sound, biosound.Sound)
 
     for attr_name, attr_val in zip(("data", "samplerate", "channels"), (data, samplerate, channels)):
         assert hasattr(sound, attr_name)
@@ -52,7 +52,7 @@ class TestSound:
     )
     def test_init(self, data, samplerate, channels):
         """Test that we can initialize a :class:`vocalpy.Sound` instance."""
-        sound = vocalpy.Sound(data=data, samplerate=samplerate)
+        sound = biosound.Sound(data=data, samplerate=samplerate)
 
         assert_sound_is_instance_with_expected_attrs(
             sound, data, samplerate, channels, audio_format="wav"
@@ -77,12 +77,12 @@ class TestSound:
     def test_init_raises(self, data, samplerate, expected_exception):
         """Test that :class:`vocalpy.Sound` raises expected errors"""
         with pytest.raises(expected_exception):
-            vocalpy.Sound(data=data, samplerate=samplerate)
+            biosound.Sound(data=data, samplerate=samplerate)
 
     def test_init_warns(self):
         """Test that we get a warning if number channels > number of samples"""
         with pytest.warns():
-            vocalpy.Sound(data=RNG.normal(size=(int(32000 * 2.17), 1)), samplerate=32000)
+            biosound.Sound(data=RNG.normal(size=(int(32000 * 2.17), 1)), samplerate=32000)
 
     @pytest.mark.parametrize(
         "data, samplerate",
@@ -95,8 +95,8 @@ class TestSound:
         ],
     )
     def test___eq__(self, data, samplerate):
-        sound = vocalpy.Sound(data=data, samplerate=samplerate)
-        other = vocalpy.Sound(data=data.copy(), samplerate=samplerate)
+        sound = biosound.Sound(data=data, samplerate=samplerate)
+        other = biosound.Sound(data=data.copy(), samplerate=samplerate)
         assert sound == other
 
     @pytest.mark.parametrize(
@@ -110,14 +110,14 @@ class TestSound:
         ],
     )
     def test___ne__(self, data, samplerate):
-        sound = vocalpy.Sound(data=data, samplerate=samplerate)
-        other = vocalpy.Sound(data=data.copy() + 0.001, samplerate=samplerate)
+        sound = biosound.Sound(data=data, samplerate=samplerate)
+        other = biosound.Sound(data=data.copy() + 0.001, samplerate=samplerate)
         assert sound != other
 
     @staticmethod
     def load_all_soundfile_paths(all_soundfile_paths):
         if all_soundfile_paths.name.endswith("cbin"):
-            data, samplerate = vocalpy._vendor.evfuncs.load_cbin(all_soundfile_paths)
+            data, samplerate = biosound._vendor.evfuncs.load_cbin(all_soundfile_paths)
             channels = 1
             audio_format = "cbin"
         elif all_soundfile_paths.name.endswith("wav"):
@@ -135,7 +135,7 @@ class TestSound:
         """Test that :meth:`vocalpy.Sound.read` works as expected."""
         data, samplerate, channels, audio_format = self.load_all_soundfile_paths(all_soundfile_paths)
 
-        sound = vocalpy.Sound.read(all_soundfile_paths)
+        sound = biosound.Sound.read(all_soundfile_paths)
         assert_sound_is_instance_with_expected_attrs(
             sound, data, samplerate, channels, audio_format
         )
@@ -153,9 +153,9 @@ class TestSound:
             # we have to normalize cbin
             # https://stackoverflow.com/a/42544738/4906855
             data_float_normal = data.astype(np.float64) / 32768.0
-            sound = vocalpy.Sound(data=data_float_normal, samplerate=samplerate)
+            sound = biosound.Sound(data=data_float_normal, samplerate=samplerate)
         else:
-            sound = vocalpy.Sound(data=data, samplerate=samplerate)
+            sound = biosound.Sound(data=data, samplerate=samplerate)
         tmp_wav_path = tmp_path / (all_soundfile_paths.stem + ".wav")
         assert not tmp_wav_path.exists()
 
@@ -163,14 +163,14 @@ class TestSound:
 
         assert tmp_wav_path.exists()
 
-        sound_loaded = vocalpy.Sound.read(tmp_wav_path)
+        sound_loaded = biosound.Sound.read(tmp_wav_path)
 
         assert_sound_is_instance_with_expected_attrs(
             sound_loaded, data, samplerate, channels, audio_format
         )
 
     def test_write_raises(self, all_cbin_paths, tmp_path):
-        sound = vocalpy.Sound.read(all_cbin_paths)
+        sound = biosound.Sound.read(all_cbin_paths)
         tmp_cbin_path = tmp_path / all_cbin_paths.name
         with pytest.raises(ValueError):
             sound.write(tmp_cbin_path)
@@ -185,12 +185,12 @@ class TestSound:
         ]
     )
     def test___iter__(self, all_wav_paths):
-        sound = vocalpy.Sound.read(all_wav_paths)
+        sound = biosound.Sound.read(all_wav_paths)
         sound_channels = [
             sound_ for sound_ in sound
         ]
         assert all(
-            [isinstance(sound_, vocalpy.Sound)
+            [isinstance(sound_, biosound.Sound)
              for sound_ in sound_channels]
         )
         for channel, sound_channel in enumerate(sound_channels):
@@ -209,9 +209,9 @@ class TestSound:
         ]
     )
     def test___getitem__(self, all_wav_paths, key):
-        sound = vocalpy.Sound.read(all_wav_paths)
+        sound = biosound.Sound.read(all_wav_paths)
         sound_channel = sound[key]
-        assert isinstance(sound_channel, vocalpy.Sound)
+        assert isinstance(sound_channel, biosound.Sound)
         if isinstance(key, int):
             assert sound_channel.data.shape[0] == 1
             np.testing.assert_allclose(
@@ -234,7 +234,7 @@ class TestSound:
         ]
     )
     def test___getitem__raises(self, all_wav_paths, key):
-        sound = vocalpy.Sound.read(all_wav_paths)
+        sound = biosound.Sound.read(all_wav_paths)
         with pytest.raises(IndexError):
             _ = sound[key]
 
@@ -242,14 +242,14 @@ class TestSound:
         'segfunc, kwargs, sound',
         [
             (
-                vocalpy.segment.meansquared,
+                biosound.segment.meansquared,
                 dict(threshold=5000, min_dur=0.02, min_silent_dur=0.004),
-                vocalpy.Sound.read(BFSONGREPO_BL26LB16_WAV_PATH)
+                biosound.Sound.read(BFSONGREPO_BL26LB16_WAV_PATH)
             ),
             (
-                vocalpy.segment.ava, 
-                {**vocalpy.segment.JOURJINEETAL2023}, 
-                vocalpy.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH)
+                biosound.segment.ava, 
+                {**biosound.segment.JOURJINEETAL2023}, 
+                biosound.Sound.read(JOURJINE_ET_AL_GO_WAV_PATH)
             ),
         ]
     )
@@ -257,7 +257,7 @@ class TestSound:
         segments = segfunc(sound, **kwargs)
         segsounds = sound.segment(segments)
         assert all([
-            isinstance(sound, vocalpy.Sound)
+            isinstance(sound, biosound.Sound)
             for sound in segsounds
         ])
         assert len(segsounds) == len(segments)
@@ -266,7 +266,7 @@ class TestSound:
         'sound, wrong_segments, expected_exception',
         [
             (
-                vocalpy.Sound.read(BFSONGREPO_BL26LB16_WAV_PATH),
+                biosound.Sound.read(BFSONGREPO_BL26LB16_WAV_PATH),
                 # a list is not a Segments instance, should raise a TypeError
                 [],
                 TypeError,
@@ -287,7 +287,7 @@ class TestSound:
         ]
     )
     def test_clip(self, start, stop, expected_clip_duration, all_wav_paths):
-        sound = vocalpy.Sound.read(all_wav_paths)
+        sound = biosound.Sound.read(all_wav_paths)
 
         if stop is None:
             clip = sound.clip(start)  # test default stop of None
@@ -297,7 +297,7 @@ class TestSound:
             clip = sound.clip(start, stop)
 
         # FIXME: test we get data we expect at sample level
-        assert isinstance(clip, vocalpy.Sound)
+        assert isinstance(clip, biosound.Sound)
         if expected_clip_duration == "sound_duration":
             expected_clip_duration = sound.duration
         assert np.allclose(clip.duration, expected_clip_duration)
@@ -326,7 +326,7 @@ class TestSound:
         ]
     )
     def test_clip_raises(self, start, stop, expected_exception, all_wav_paths):
-        sound = vocalpy.Sound.read(all_wav_paths)
+        sound = biosound.Sound.read(all_wav_paths)
         with pytest.raises(expected_exception):
             if start is None:
                 sound.clip(stop=stop)
@@ -334,7 +334,7 @@ class TestSound:
                 sound.clip(start, stop)
 
     def test_to_mono(self, all_elie_theunissen_2016_wav_paths):
-        sound = vocalpy.Sound.read(all_elie_theunissen_2016_wav_paths)
+        sound = biosound.Sound.read(all_elie_theunissen_2016_wav_paths)
         sound_mono = sound.to_mono()
         assert np.array_equal(
             sound_mono.data,

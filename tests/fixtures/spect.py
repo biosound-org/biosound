@@ -3,7 +3,7 @@ import inspect
 
 import pytest
 
-import vocalpy
+import biosound
 
 from .test_data import GENERATED_TEST_DATA_ROOT, SOURCE_TEST_DATA_ROOT
 
@@ -108,6 +108,6 @@ def specific_spect_list(spect_list_mat,
 
 @pytest.fixture
 def default_spect_params():
-    spect_sig = inspect.signature(vocalpy.spectrogram)
+    spect_sig = inspect.signature(biosound.spectrogram)
     default_n_fft, default_hop_length = spect_sig.parameters['n_fft'], spect_sig.parameters['hop_length']
-    return vocalpy.SpectrogramParameters(n_fft=default_n_fft, hop_length=default_hop_length)
+    return biosound.SpectrogramParameters(n_fft=default_n_fft, hop_length=default_hop_length)

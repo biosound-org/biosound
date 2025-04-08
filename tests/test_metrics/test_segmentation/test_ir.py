@@ -8,7 +8,7 @@ import numpy as np
 import numpy.typing as npt
 import pytest
 
-import vocalpy.metrics.segmentation.ir
+import biosound.metrics.segmentation.ir
 
 
 @attrs.define
@@ -592,7 +592,7 @@ def test_find_hits(ir_metric_test_case):
         ir_metric_test_case.expected_n_tp,
     )
 
-    hits_ref, hits_hyp, diffs = vocalpy.metrics.segmentation.ir.find_hits(
+    hits_ref, hits_hyp, diffs = biosound.metrics.segmentation.ir.find_hits(
         hypothesis, reference, tolerance=tolerance, decimals=decimals
     )
 
@@ -640,7 +640,7 @@ def test_precision_recall_fscore(ir_metric_test_case, ir_metric_name):
         ir_metric_test_case.expected_n_tp,
     )
 
-    metric_value, n_tp, ir_metric_data = vocalpy.metrics.segmentation.ir.precision_recall_fscore(
+    metric_value, n_tp, ir_metric_data = biosound.metrics.segmentation.ir.precision_recall_fscore(
         hypothesis, reference, ir_metric_name, tolerance=tolerance, decimals=decimals
     )
 
@@ -683,7 +683,7 @@ def test_precision(ir_metric_test_case):
         ir_metric_test_case.expected_n_tp,
     )
 
-    precision, n_tp, ir_metric_data = vocalpy.metrics.segmentation.ir.precision(
+    precision, n_tp, ir_metric_data = biosound.metrics.segmentation.ir.precision(
         hypothesis, reference, tolerance=tolerance, decimals=decimals
     )
 
@@ -717,7 +717,7 @@ def test_recall(ir_metric_test_case):
         ir_metric_test_case.expected_n_tp,
     )
 
-    recall, n_tp, ir_metric_data = vocalpy.metrics.segmentation.ir.recall(
+    recall, n_tp, ir_metric_data = biosound.metrics.segmentation.ir.recall(
         hypothesis, reference, tolerance=tolerance, decimals=decimals
     )
 
@@ -751,7 +751,7 @@ def test_fscore(ir_metric_test_case):
         ir_metric_test_case.expected_n_tp,
     )
 
-    fscore, n_tp, ir_metric_data = vocalpy.metrics.segmentation.ir.fscore(
+    fscore, n_tp, ir_metric_data = biosound.metrics.segmentation.ir.fscore(
         hypothesis, reference, tolerance=tolerance, decimals=decimals
     )
 
@@ -778,7 +778,7 @@ def test_fscore(ir_metric_test_case):
     ]
 )
 def test_concat_starts_and_stops(starts, stops, expected_out):
-    out = vocalpy.metrics.segmentation.ir.concat_starts_and_stops(
+    out = biosound.metrics.segmentation.ir.concat_starts_and_stops(
         starts, stops
     )
     assert np.array_equal(out, expected_out)

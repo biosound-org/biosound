@@ -3,11 +3,11 @@ test evfuncs module
 """
 import numpy as np
 
-import vocalpy._vendor.evfuncs
+import biosound._vendor.evfuncs
 
 
 def test_readrecf(all_rec_paths):
-    rec_dict = vocalpy._vendor.evfuncs.readrecf(all_rec_paths)
+    rec_dict = biosound._vendor.evfuncs.readrecf(all_rec_paths)
     assert 'header' in rec_dict
     assert isinstance(rec_dict['header'], list)
     assert 'sample_freq' in rec_dict
@@ -32,7 +32,7 @@ def test_readrecf(all_rec_paths):
 
 
 def test_load_cbin(all_cbin_paths):
-    dat, fs = vocalpy._vendor.evfuncs.load_cbin(all_cbin_paths)
+    dat, fs = biosound._vendor.evfuncs.load_cbin(all_cbin_paths)
     assert isinstance(dat, np.ndarray)
     assert dat.dtype == '>i2'  # should be big-endian 16 bit
     assert isinstance(fs, int)

@@ -1,13 +1,13 @@
 import pytest
 
-import vocalpy
-from vocalpy.examples.example_data import ExampleData
+import biosound
+from biosound.examples.example_data import ExampleData
 
 
 class TestExampleData:
     def test_init(self):
-        bells = vocalpy.example("bells.wav")
-        samba = vocalpy.example("samba.wav")
+        bells = biosound.example("bells.wav")
+        samba = biosound.example("samba.wav")
         zb_examples = ExampleData(bells=bells, samba=samba)
         assert isinstance(zb_examples, ExampleData)
         for keyattr, val in zip(

@@ -10,7 +10,7 @@ import json
 import pathlib
 import shutil
 
-import vocalpy as voc
+import biosound as voc
 
 
 # Annoyingly, we have to repeat ourselves here and declare all these paths

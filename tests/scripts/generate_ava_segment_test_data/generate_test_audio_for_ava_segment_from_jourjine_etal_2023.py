@@ -10,7 +10,7 @@ https://datadryad.org/stash/downloads/file_stream/2143657
 """
 import pathlib
 
-import vocalpy as voc
+import biosound as voc
 
 data_dir = pathlib.Path('~/Documents/data/vocal/jourjine-et-al-2023/developmentLL/').expanduser()
 wav_paths = voc.paths.from_dir(data_dir, 'wav')

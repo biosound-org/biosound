@@ -1,6 +1,6 @@
 import pytest
 
-import vocalpy
+import biosound
 
 from .fixtures.audio import BIRDSONGREC_WAV_LIST
 
@@ -13,23 +13,23 @@ from .fixtures.audio import BIRDSONGREC_WAV_LIST
     ]
 )
 def test_spectrogram(method, all_wav_paths):
-    sound = vocalpy.Sound.read(all_wav_paths)
+    sound = biosound.Sound.read(all_wav_paths)
     if method is not None:
-        spectrogram = vocalpy.spectrogram(sound, method=method)
+        spectrogram = biosound.spectrogram(sound, method=method)
     else:
-        spectrogram = vocalpy.spectrogram(sound)
-    assert isinstance(spectrogram, vocalpy.Spectrogram)
+        spectrogram = biosound.spectrogram(sound)
+    assert isinstance(spectrogram, biosound.Spectrogram)
 
 
 def test_input_not_audio_raises():
     """Test :func:`vocalpy.spectrogram` raises ValueError when first arg is not Sound"""
-    sound = vocalpy.Sound.read(BIRDSONGREC_WAV_LIST[0])
+    sound = biosound.Sound.read(BIRDSONGREC_WAV_LIST[0])
     with pytest.raises(TypeError):
-        vocalpy.spectrogram(sound.data)
+        biosound.spectrogram(sound.data)
 
 
 def test_method_not_valid_raises():
     """Test :func:`vocalpy.spectrogram` raises ValueError when method arg is not valid"""
-    sound = vocalpy.Sound.read(BIRDSONGREC_WAV_LIST[0])
+    sound = biosound.Sound.read(BIRDSONGREC_WAV_LIST[0])
     with pytest.raises(ValueError):
-        vocalpy.spectrogram(sound, method='incorrect-method-name')
+        biosound.spectrogram(sound, method='incorrect-method-name')

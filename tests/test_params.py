@@ -2,11 +2,11 @@ import dataclasses
 
 import pytest
 
-import vocalpy.params
+import biosound.params
 
 
 @dataclasses.dataclass
-class ParamsSubclass(vocalpy.params.Params):
+class ParamsSubclass(biosound.params.Params):
     param1: int
     param2: float
 
@@ -34,4 +34,4 @@ class TestParams:
     )
     def test_isinstance(self, param1, param2):
         params_subclass_instance = ParamsSubclass(param1=param1, param2=param2)
-        assert isinstance(params_subclass_instance, vocalpy.params.Params)
+        assert isinstance(params_subclass_instance, biosound.params.Params)

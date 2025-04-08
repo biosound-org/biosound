@@ -4,18 +4,18 @@ import unittest.mock
 
 import pytest
 
-import vocalpy.examples._examples
+import biosound.examples._examples
 
 
 def test_EXAMPLE():
     assert isinstance(
-        vocalpy.examples._examples.EXAMPLES, list
+        biosound.examples._examples.EXAMPLES, list
     )
-    assert len(vocalpy.examples._examples.EXAMPLES) > 0
+    assert len(biosound.examples._examples.EXAMPLES) > 0
     assert all(
         [isinstance(
-            example, vocalpy.examples._examples.Example
-        ) for example in vocalpy.examples._examples.EXAMPLES]
+            example, biosound.examples._examples.Example
+        ) for example in biosound.examples._examples.EXAMPLES]
     )
 
 
@@ -26,12 +26,12 @@ def return_path(request):
 
 @pytest.mark.parametrize(
     'example',
-    vocalpy.examples._examples.EXAMPLES
+    biosound.examples._examples.EXAMPLES
 )
 def test_example(example, return_path):
-    out = vocalpy.examples._examples.example(example.name, return_path=return_path)
-    if example.type == vocalpy.examples._examples.ExampleTypes.ExampleData:
-        assert isinstance(out, vocalpy.examples._examples.ExampleData)
+    out = biosound.examples._examples.example(example.name, return_path=return_path)
+    if example.type == biosound.examples._examples.ExampleTypes.ExampleData:
+        assert isinstance(out, biosound.examples._examples.ExampleData)
         if return_path:
             for val in out.values():
                 assert isinstance(val, (pathlib.Path, list))
@@ -41,18 +41,18 @@ def test_example(example, return_path):
         if return_path:
             assert isinstance(out, pathlib.Path)
         else:
-            if example.type == vocalpy.examples._examples.ExampleTypes.Sound:
-                assert isinstance(out, vocalpy.Sound)
-            elif example.type == vocalpy.examples._examples.ExampleTypes.Spectrogram:
-                assert isinstance(out, vocalpy.Spectrogram)
-            elif example.type == vocalpy.examples._examples.ExampleTypes.Annotation:
-                assert isinstance(out, vocalpy.Annotation)
+            if example.type == biosound.examples._examples.ExampleTypes.Sound:
+                assert isinstance(out, biosound.Sound)
+            elif example.type == biosound.examples._examples.ExampleTypes.Spectrogram:
+                assert isinstance(out, biosound.Spectrogram)
+            elif example.type == biosound.examples._examples.ExampleTypes.Annotation:
+                assert isinstance(out, biosound.Annotation)
 
 
 def test_show(capsys):
-    vocalpy.examples._examples.show()
+    biosound.examples._examples.show()
     captured = capsys.readouterr()
-    for example in vocalpy.examples._examples.EXAMPLES:
+    for example in biosound.examples._examples.EXAMPLES:
         assert example.name in captured.out
         assert example.description in captured.out
 
@@ -61,7 +61,7 @@ def test_show(capsys):
     'name',
     [
         example.name
-        for example in vocalpy.examples._examples.EXAMPLES
+        for example in biosound.examples._examples.EXAMPLES
         if example.requires_download
     ]
 )
@@ -71,4 +71,4 @@ def test_example_raises(name):
         side_effect=socket.gaierror
     ):
         with pytest.raises(ConnectionError):
-            vocalpy.example(name)
+            biosound.example(name)

@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-import vocalpy
-import vocalpy as voc
+import biosound
+import biosound as voc
 
 from ..fixtures.audio import JOURJINE_ETAL_2023_WAV_LIST
 from ..fixtures.segments import AVA_SEGMENT_TXT_LIST
@@ -42,7 +42,7 @@ def test_segment_replicates(wav_path_seg_txt_path_tuple):
     del params['min_isi_dur']
     segments = voc.segment.ava(sound, **params)
 
-    assert isinstance(segments, vocalpy.Segments)
+    assert isinstance(segments, biosound.Segments)
     # we set atol=1e-5 because we expect values to be the same up to roughly 5th decimal place
     # https://stackoverflow.com/questions/65909842/what-is-rtol-for-in-numpys-allclose-function
     np.testing.assert_allclose(segments.start_times, onsets_gt, atol=1e-5, rtol=0)
